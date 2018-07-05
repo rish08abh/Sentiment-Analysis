@@ -1,0 +1,73 @@
+#!/usr/bin/python3
+
+import tweepy 
+
+from textblob import TextBlob
+
+import matplotlib.pyplot as plt
+
+api_data={
+		'consumerKey':"YOUR_KEY",
+		'consumerSecret':"YOUR_KEY",
+		'accessToken':"YOUR_KEY",
+		'accessSecret':"YOUR_KEY"
+	 }
+
+
+auth=tweepy.OAuthHandler(api_data['consumerKey'],api_data['consumerSecret'])
+
+auth.set_access_token(api_data['accessToken'],api_data['accessSecret'])
+
+
+api=tweepy.API(auth)
+
+tt=input("enter the topic to search::")
+
+
+# only considering 50 tweets maximum one can pass is 99 
+
+topic=api.search(q=tt,lang="en",count=50)
+
+analyse=[]
+
+for ii in topic:
+	#passing tweet data to TextBlob
+	blob_data=TextBlob(ii.text)
+	#analyse the sentiment and passing and storing it in list
+	analyse.append(blob_data.sentiment)
+
+pos=0
+neg=0
+neu=0
+
+# collecting data for pie chart
+for kk in analyse:
+	if kk.polarity>0:
+		pos=pos+1
+	elif kk.polarity<0:
+		neg=neg+1
+	else:
+		neu=neu+1
+
+
+print("pos::",pos)
+print("neu::",neu)
+print("neg::",neg)
+
+
+labels=['positive','neutral','negative']
+
+sizes=[pos,neu,neg]
+
+colors=['skyblue','blue','pink']
+
+plt.pie(sizes,labels=labels,colors=colors,autopct="1.1f%%",shadow=True)
+
+plt.axis('equal')
+
+plt.show()
+
+
+
+
+
